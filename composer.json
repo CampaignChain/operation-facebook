@@ -1,0 +1,14 @@
+{
+    "name": "campaignchain/operation-facebook",
+    "description": "Collection of various Facebook operations.",
+    "keywords": ["facebook","operation"],
+    "type": "campaignchain-operation",
+    "homepage": "http://www.campaignchain.com",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Sandro Groganz",
+            "email": "sandro@campaignchain.com"
+        }
+    ]
+}
