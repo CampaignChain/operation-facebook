@@ -10,13 +10,14 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Entity;
 
+use CampaignChain\CoreBundle\Entity\Meta;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="campaignchain_operation_facebook_status")
  */
-class Status
+class Status extends Meta
 {
     /**
      * @ORM\Column(type="integer")
