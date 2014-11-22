@@ -8,6 +8,7 @@
 modules:
     campaignchain-facebook-publish-status:
         display_name: 'Publish Status'
-        owns_location: true
         services:
             job: campaignchain.operation.facebook.job.publish_status
+        params:
+            owns_location: true
