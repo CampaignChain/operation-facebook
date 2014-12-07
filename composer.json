@@ -13,5 +13,14 @@
     ],
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\FacebookBundle\\": "" }
+    },
+    "extra": {
+        "campaignchain": {
+            "kernel": {
+                "classes": [
+                    "CampaignChain\\Operation\\FacebookBundle\\CampaignChainOperationFacebookBundle"
+                ]
+            }
+        }
     }
 }
