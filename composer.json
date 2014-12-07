@@ -11,6 +11,9 @@
             "email": "sandro@campaignchain.com"
         }
     ],
+    "require": {
+        "campaignchain/activity-facebook": "dev-1.0.0-alpha.3"
+    },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\FacebookBundle\\": "" }
     },
