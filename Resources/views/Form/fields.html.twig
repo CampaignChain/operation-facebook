@@ -1,0 +1,11 @@
+{% block campaignchain_operation_facebook_publish_status_widget %}
+    {% spaceless %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><img class="fa-fw" src="{{ data.getFacebookLocation().getLocation().getImage() }}">&nbsp;<a href="{{ data.getFacebookLocation().getLocation().getUrl() }}">{{ data.getFacebookLocation().getLocation().getName() }}</a></div>
+            <div class="panel-body">
+            {{ form_row(form.message, { 'widget_col': 12}) }}
+            {{ form_row(form.privacy, { 'label_col': 3, 'widget_col': 4}) }}
+            </div>
+        </div>
+    {% endspaceless %}
+{% endblock %}
