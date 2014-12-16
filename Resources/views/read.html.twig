@@ -1,0 +1,43 @@
+{#
+This file is part of the CampaignChain package.
+
+(c) Sandro Groganz <sandro@campaignchain.com>
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends 'CampaignChainCoreBundle:Operation:read.html.twig' %}
+
+{% block operation %}
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+
+    <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group" role="group" aria-label="...">
+            <a href="{{ status.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Facebook</a>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Operation</div>
+        <div class="panel-body">
+        {% if is_public == false %}
+            <p>{{ status.getMessage() }}</p>
+        {% else %}
+            <div class="fb-post" data-href="https://www.facebook.com/permalink.php?story_fbid={{ status.getFacebookLocation().getIdentifier() }}&id={{ status.getPostId() }}" data-width="500"></div>
+        {% endif %}
+        </div>
+    </div>
+    <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group" role="group" aria-label="...">
+            <a href="{{ status.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Facebook</a>
+        </div>
+    </div>
+{% endblock %}

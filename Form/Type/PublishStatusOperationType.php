@@ -10,6 +10,7 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 
+use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -46,23 +47,27 @@ class PublishStatusOperationType extends AbstractType
                     'placeholder' => 'Compose message...',
                     'max_length' => 2000,
                 ),
-            ))
-            ->add('privacy', 'choice', array(
-                'label' => 'Audience',
-                'choices'   => array(
-                    'EVERYONE' => 'Public',
-                    'ALL_FRIENDS' => 'Friends',
-                    'FRIENDS_OF_FRIENDS' => 'Friends of Friends',
-                    'SELF' => 'Only Me'
-                ),
-                'multiple'  => false,
             ));
+
+        if($this->status instanceof UserStatus){
+            $builder
+                ->add('privacy', 'choice', array(
+                    'label' => 'Audience',
+                    'choices'   => array(
+                        'EVERYONE' => 'Public',
+                        'ALL_FRIENDS' => 'Friends',
+                        'FRIENDS_OF_FRIENDS' => 'Friends of Friends',
+                        'SELF' => 'Only Me'
+                    ),
+                    'multiple'  => false,
+                ));
+        }
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $defaults = array(
-            'data_class' => 'CampaignChain\Operation\FacebookBundle\Entity\Status',
+            'data_class' => get_class($this->status),
         );
 
         if($this->status){

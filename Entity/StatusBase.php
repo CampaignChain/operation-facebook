@@ -11,13 +11,17 @@
 namespace CampaignChain\Operation\FacebookBundle\Entity;
 
 use CampaignChain\CoreBundle\Entity\Meta;
+use CampaignChain\Location\FacebookBundle\Entity\LocationBase;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="campaignchain_operation_facebook_status")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap( { "user" = "UserStatus", "page" = "PageStatus" } )
  */
-class Status extends Meta
+abstract class StatusBase extends Meta
 {
     /**
      * @ORM\Column(type="integer")
@@ -32,14 +36,14 @@ class Status extends Meta
     protected $operation;
 
     /**
+     * @ORM\ManyToOne(targetEntity="CampaignChain\Location\FacebookBundle\Entity\LocationBase")
+     */
+    protected $facebookLocation;
+
+    /**
      * @ORM\Column(type="text")
      */
     protected $message;
-
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    protected $privacy;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -82,29 +86,6 @@ class Status extends Meta
     public function getMessage()
     {
         return $this->message;
-    }
-
-    /**
-     * Set privacy
-     *
-     * @param string $privacy
-     * @return Status
-     */
-    public function setPrivacy($privacy)
-    {
-        $this->privacy = $privacy;
-
-        return $this;
-    }
-
-    /**
-     * Get privacy
-     *
-     * @return string 
-     */
-    public function getPrivacy()
-    {
-        return $this->privacy;
     }
 
     /**
@@ -174,5 +155,24 @@ class Status extends Meta
     public function getOperation()
     {
         return $this->operation;
+    }
+
+    /**
+     * @param LocationBase $facebookLocation
+     * @return $this
+     */
+    public function setFacebookLocation(LocationBase $facebookLocation = null)
+    {
+        $this->facebookLocation = $facebookLocation;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFacebookLocation()
+    {
+        return $this->facebookLocation;
     }
 }

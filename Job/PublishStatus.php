@@ -13,6 +13,7 @@ namespace CampaignChain\Operation\FacebookBundle\Job;
 use CampaignChain\CoreBundle\Entity\Action;
 use CampaignChain\CoreBundle\Entity\CTA;
 use CampaignChain\CoreBundle\Entity\Medium;
+use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Job\JobServiceInterface;
 use CampaignChain\CoreBundle\Util\ParserUtil;
@@ -32,10 +33,10 @@ class PublishStatus implements JobServiceInterface
 
     public function execute($operationId)
     {
-        $status = $this->em->getRepository('CampaignChainOperationFacebookBundle:Status')->findOneByOperation($operationId);
+        $status = $this->em->getRepository('CampaignChainOperationFacebookBundle:StatusBase')->findOneByOperation($operationId);
 
         if (!$status) {
-            throw new \Exception('No status message found for an operation with ID: '.$operationId);
+            throw new \Exception('No Facebook status found for an operation with ID: '.$operationId);
         }
 
         // Process URLs in message and save the new message text, now including
@@ -49,13 +50,16 @@ class PublishStatus implements JobServiceInterface
         $connection = $channel->connectByActivity($status->getOperation()->getActivity());
 
         if ($connection) {
-            $privacy = array(
-                'value' => $status->getPrivacy()
-            );
             $params = array();
-            $params['privacy'] = json_encode($privacy);
+
+            if($status instanceof UserStatus){
+                $privacy = array(
+                    'value' => $status->getPrivacy()
+                );
+                $params['privacy'] = json_encode($privacy);
+            }
             $params['message'] = $status->getMessage();
-            $response = $connection->api('/me/feed', 'POST', $params);
+            $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $params);
 
             $connection->destroySession();
 
@@ -75,7 +79,11 @@ class PublishStatus implements JobServiceInterface
 
             $this->em->flush();
 
-            $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook with privacy setting "'.$privacy['value'].'". See it on Facebook: <a href="'.$statusURL.'">'.$statusURL.'</a>';
+            $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook';
+            if($status instanceof UserStatus){
+                $this->message .= ' with privacy setting "'.$privacy['value'].'"';
+            }
+            $this->message .= '. See it on Facebook: <a href="'.$statusURL.'">'.$statusURL.'</a>';
 
             return self::STATUS_OK;
         }

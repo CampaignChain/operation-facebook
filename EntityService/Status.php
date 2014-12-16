@@ -22,7 +22,7 @@ class Status
     }
 
     public function getStatusByOperation($id){
-        $status = $this->em->getRepository('CampaignChainOperationFacebookBundle:Status')
+        $status = $this->em->getRepository('CampaignChainOperationFacebookBundle:StatusBase')
             ->findOneByOperation($id);
 
         if (!$status) {
