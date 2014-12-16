@@ -1,10 +1,25 @@
+{#
+This file is part of the CampaignChain package.
+
+(c) Sandro Groganz <sandro@campaignchain.com>
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
 {% block campaignchain_operation_facebook_publish_status_widget %}
     {% spaceless %}
-        <div class="panel panel-default">
-            <div class="panel-heading"><img class="fa-fw" src="{{ data.getFacebookLocation().getLocation().getImage() }}">&nbsp;<a href="{{ data.getFacebookLocation().getLocation().getUrl() }}">{{ data.getFacebookLocation().getLocation().getName() }}</a></div>
-            <div class="panel-body">
-            {{ form_row(form.message, { 'widget_col': 12}) }}
-            {{ form_row(form.privacy, { 'label_col': 3, 'widget_col': 4}) }}
+        {% stylesheets '@campaignchain_operation_facebook_css' %}
+        <!-- facebook bundle --><link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+        {% endstylesheets %}
+        <div id="campaignchain-operation-facebook-publish-status">
+            <div class="panel panel-default">
+                <div class="panel-heading"><i class="fa fa-facebook-square"></i><img class="fa-fw" src="{{ data.getFacebookLocation().getLocation().getImage() }}">&nbsp;<a href="{{ data.getFacebookLocation().getLocation().getUrl() }}">{{ data.getFacebookLocation().getLocation().getName() }}</a></div>
+                <div class="panel-body">
+                    <p><strong>Status</strong></p>
+                {{ form_row(form.message, { 'widget_col': 12}) }}
+                {{ form_row(form.privacy, { 'label_col': 3, 'widget_col': 4}) }}
+                </div>
             </div>
         </div>
     {% endspaceless %}

@@ -1,3 +1,10 @@
+assetic:
+    bundles:
+        - CampaignChainOperationFacebookBundle
+    assets:
+        campaignchain_operation_facebook_css:
+            inputs:
+                - '@CampaignChainOperationFacebookBundle/Resources/public/css/base.css'
 twig:
     form:
         resources:
