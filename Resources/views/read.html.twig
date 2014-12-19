@@ -10,6 +10,10 @@ file that was distributed with this source code.
 {% extends 'CampaignChainCoreBundle:Operation:read.html.twig' %}
 
 {% block operation %}
+    {% stylesheets '@campaignchain_operation_facebook_css' %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+    {% endstylesheets %}
+
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
@@ -25,14 +29,16 @@ file that was distributed with this source code.
             <a href="{{ status.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Facebook</a>
         </div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Operation</div>
-        <div class="panel-body">
-        {% if is_public == false %}
-            <p>{{ status.getMessage() }}</p>
-        {% else %}
-            <div class="fb-post" data-href="https://www.facebook.com/permalink.php?story_fbid={{ status.getFacebookLocation().getIdentifier() }}&id={{ status.getPostId() }}" data-width="500"></div>
-        {% endif %}
+    <div id="campaignchain-operation-facebook-publish-status">
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-facebook-square"></i></div>
+            <div class="panel-body">
+            {% if is_public == false %}
+                <p>{{ status.getMessage() }}</p>
+            {% else %}
+                <div class="fb-post" data-href="https://www.facebook.com/permalink.php?story_fbid={{ status.getFacebookLocation().getIdentifier() }}&id={{ status.getPostId() }}" data-width="500"></div>
+            {% endif %}
+            </div>
         </div>
     </div>
     <div class="btn-toolbar" role="toolbar">
