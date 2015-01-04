@@ -36,7 +36,9 @@ file that was distributed with this source code.
             {% if is_public == false %}
                 <p>{{ status.getMessage() }}</p>
             {% else %}
-                <div class="fb-post" data-href="https://www.facebook.com/permalink.php?story_fbid={{ status.getFacebookLocation().getIdentifier() }}&id={{ status.getPostId() }}" data-width="500"></div>
+                <div class="fb-post"
+                     data-href="{{ status.getUrl() }}"
+                     data-width="500"></div>
             {% endif %}
             </div>
         </div>
