@@ -49,3 +49,15 @@ file that was distributed with this source code.
         </div>
     </div>
 {% endblock %}
+
+{% block sidebar_operation %}
+    {% if status.getPrivacy() == 'EVERYONE' %}
+        <p><i class="fa fa-globe"></i> Public</p>
+    {% elseif status.getPrivacy() == 'ALL_FRIENDS' %}
+        <p><i class="fa fa-users"></i> Friends</p>
+    {% elseif status.getPrivacy() == 'FRIENDS_OF_FRIENDS' %}
+        <p><i class="fa fa-users"></i> Friends of Friends</p>
+    {% elseif status.getPrivacy() == 'SELF' %}
+        <p><i class="fa fa-lock"></i> Only Me</p>
+    {% endif %}
+{% endblock %}
