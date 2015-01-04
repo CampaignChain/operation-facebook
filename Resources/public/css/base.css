@@ -24,3 +24,19 @@ file that was distributed with this source code.
 #campaignchain-operation-facebook-publish-status .panel-body {
     background-color: #f8f8f8;
 }
+
+#campaignchain-operation-facebook-publish-status .panel-body .status {
+    padding: 12px;
+    position: relative;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-color: #e9eaed #dfe0e4 #d0d1d5;
+    border-image: none;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 14px;
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    width:500px;
+}

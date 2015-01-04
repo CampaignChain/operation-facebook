@@ -34,7 +34,7 @@ file that was distributed with this source code.
             <div class="panel-heading"><i class="fa fa-facebook-square"></i></div>
             <div class="panel-body">
             {% if is_public == false %}
-                <p>{{ status.getMessage() }}</p>
+                <div class="status">{{ status.getMessage()|campaignchain_make_links|raw }}</div>
             {% else %}
                 <div class="fb-post"
                      data-href="{{ status.getUrl() }}"
