@@ -7,21 +7,21 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 */
 
-#campaignchain-operation-facebook-publish-status .panel-default > .panel-heading {
+#campaignchain-operation-field .panel-default > .panel-heading {
     background-color: #4e69a2;
     color: #fff;
     height: 44px;
 }
 
-#campaignchain-operation-facebook-publish-status .panel-default > .panel-heading a {
+#campaignchain-operation-field .panel-default > .panel-heading a {
     color: #fff;
 }
 
-#campaignchain-operation-facebook-publish-status .panel-body {
+#campaignchain-operation-field .panel-body {
     background-color: #f8f8f8;
 }
 
-#campaignchain-operation-facebook-publish-status .panel-body .status {
+#campaignchain-operation-field .panel-body .status {
     padding: 12px;
     position: relative;
     word-wrap: break-word;

@@ -23,33 +23,18 @@ file that was distributed with this source code.
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
+    {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
 
-    <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group" role="group" aria-label="...">
-            <a href="{{ status.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Facebook</a>
-        </div>
-    </div>
-    <div id="campaignchain-operation-facebook-publish-status">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                {% set location = status.getOperation().getActivity().getLocation() %}
-                <div class='campaignchain-medium-icon'>
-                    <img class='icon' src='{{ asset( location|campaignchain_medium_icon ) }}'/>
-                    <img class='context-icon' src='{{ asset( location|campaignchain_medium_context ) }}' style='background-image: url("{{ asset( location|campaignchain_medium_context ) }}");'/>
-                    <span class="text"><a href="{{ location.getUrl() }}" target="_blank">{{ location.getName() }}</a></span>
-                </div>
-            </div>
-            <div class="panel-body">
-            {% if is_public == false %}
-                <div class="status">{{ status.getMessage()|campaignchain_make_links|raw }}</div>
-            {% else %}
-                <div class="fb-post"
-                     data-href="{{ status.getUrl() }}"
-                     data-width="500"></div>
-            {% endif %}
-            </div>
-        </div>
-    </div>
+        {% if is_public == false %}
+            <div class="status">{{ status.getMessage()|campaignchain_make_links|raw }}</div>
+        {% else %}
+            <div class="fb-post"
+                 data-href="{{ status.getUrl() }}"
+                 data-width="500"></div>
+        {% endif %}
+
+    {% include 'CampaignChainCoreBundle:Operation:field_footer.html.twig' %}
+
     <div class="btn-toolbar" role="toolbar">
         <div class="btn-group" role="group" aria-label="...">
             <a href="{{ status.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Facebook</a>
