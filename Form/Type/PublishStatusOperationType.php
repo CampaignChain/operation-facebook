@@ -52,7 +52,7 @@ class PublishStatusOperationType extends AbstractType
                 'label' => false,
                 'attr' => array(
                     'placeholder' => 'Compose message...',
-                    'max_length' => 2000,
+                    'maxlength' => 2000,
                 ),
             ));
 
