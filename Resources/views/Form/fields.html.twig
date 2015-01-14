@@ -15,7 +15,9 @@ file that was distributed with this source code.
         {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
             <p><strong>Status</strong></p>
             {{ form_row(form.message, { 'widget_col': 12}) }}
-            {{ form_row(form.privacy, { 'label_col': 3, 'widget_col': 9}) }}
+            {% if form.privacy is defined %}
+                {{ form_row(form.privacy, { 'label_col': 3, 'widget_col': 9}) }}
+            {% endif %}
         {% include 'CampaignChainCoreBundle:Operation:field_footer.html.twig' %}
     {% endspaceless %}
 {% endblock %}
