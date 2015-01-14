@@ -9,6 +9,12 @@ modules:
     campaignchain-facebook-publish-status:
         display_name: 'Publish Status'
         services:
-            job: campaignchain.operation.facebook.job.publish_status
+            job: campaignchain.job.operation.facebook.publish_status
+            report: campaignchain.job.report.facebook.publish_status
         params:
             owns_location: true
+        metrics:
+            activity:
+                - "Likes"
+                - "Shares"
+                - "Comments"

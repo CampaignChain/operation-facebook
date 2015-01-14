@@ -77,6 +77,10 @@ class PublishStatus implements JobOperationInterface
             $location->setName($status->getOperation()->getName());
             $location->setStatus(Medium::STATUS_ACTIVE);
 
+            // Schedule data collection for report
+            $report = $this->container->get('campaignchain.job.report.facebook.publish_status');
+            $report->schedule($status->getOperation());
+
             $this->em->flush();
 
             $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook';

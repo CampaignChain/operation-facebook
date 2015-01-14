@@ -8,8 +8,11 @@
 parameters:
 
 services:
-    campaignchain.operation.facebook.job.publish_status:
+    campaignchain.job.operation.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Job\PublishStatus
+        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+    campaignchain.job.report.facebook.publish_status:
+        class: CampaignChain\Operation\FacebookBundle\Job\ReportPublishStatus
         arguments: [ @doctrine.orm.entity_manager, @service_container ]
     campaignchain.operation.facebook.status:
         class: CampaignChain\Operation\FacebookBundle\EntityService\Status
