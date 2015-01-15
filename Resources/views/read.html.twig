@@ -25,13 +25,13 @@ file that was distributed with this source code.
 
     {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
 
-        {% if is_public == false %}
+        {#{% if is_public == false %}#}
             <div class="status">{{ status.getMessage()|campaignchain_make_links|raw }}</div>
-        {% else %}
-            <div class="fb-post"
-                 data-href="{{ status.getUrl() }}"
-                 data-width="500"></div>
-        {% endif %}
+        {#{% else %}#}
+            {#<div class="fb-post"#}
+                 {#data-href="{{ status.getUrl() }}"#}
+                 {#data-width="500"></div>#}
+        {#{% endif %}#}
 
     {% include 'CampaignChainCoreBundle:Operation:field_footer.html.twig' %}
 
@@ -43,7 +43,7 @@ file that was distributed with this source code.
 {% endblock %}
 
 {% block sidebar_operation %}
-    {% if status_type == 'user' and status.getPrivacy() == 'EVERYONE' %}
+    {% if status_type == 'user' %}
         {% if status.getPrivacy() == 'EVERYONE' %}
             <p><i class="fa fa-globe"></i> Public</p>
         {% elseif status.getPrivacy() == 'ALL_FRIENDS' %}
@@ -53,5 +53,7 @@ file that was distributed with this source code.
         {% elseif status.getPrivacy() == 'SELF' %}
             <p><i class="fa fa-lock"></i> Only Me</p>
         {% endif %}
+    {% else %}
+        <p><i class="fa fa-globe"></i> Public</p>
     {% endif %}
 {% endblock %}
