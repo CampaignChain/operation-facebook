@@ -50,7 +50,7 @@ class ReportPublishStatus implements JobReportInterface
         }
 
         $facts[self::METRIC_LIKES] = 0;
-        $facts[self::METRIC_SHARES] = 0;
+//        $facts[self::METRIC_SHARES] = 0;
         $facts[self::METRIC_COMMENTS] = 0;
 
         $factService = $this->container->get('campaignchain.core.fact');

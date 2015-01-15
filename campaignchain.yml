@@ -16,5 +16,4 @@ modules:
         metrics:
             activity:
                 - "Likes"
-                - "Shares"
                 - "Comments"
