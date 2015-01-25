@@ -12,12 +12,15 @@
         }
     ],
     "require": {
-        "campaignchain/activity-facebook": "dev-1.0.0-beta.1"
+        "campaignchain/activity-facebook": "1.0.0@beta"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\FacebookBundle\\": "" }
     },
     "extra": {
+        "branch-alias": {
+            "dev-1.0.0-beta.1": "1.0.0-beta"
+        },
         "campaignchain": {
             "kernel": {
                 "classes": [
