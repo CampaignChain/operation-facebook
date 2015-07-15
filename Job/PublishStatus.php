@@ -15,10 +15,10 @@ use CampaignChain\CoreBundle\Entity\CTA;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Doctrine\ORM\EntityManager;
-use CampaignChain\CoreBundle\Job\JobOperationInterface;
+use CampaignChain\CoreBundle\Job\JobActionInterface;
 use CampaignChain\CoreBundle\Util\ParserUtil;
 
-class PublishStatus implements JobOperationInterface
+class PublishStatus implements JobActionInterface
 {
     protected $em;
     protected $container;
