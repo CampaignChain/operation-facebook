@@ -1,7 +1,7 @@
 {
     "name": "campaignchain/operation-facebook",
     "description": "Collection of various Facebook operations.",
-    "keywords": ["facebook","operation"],
+    "keywords": ["facebook","operation","campaignchain"],
     "type": "campaignchain-operation",
     "homepage": "http://www.campaignchain.com",
     "license": "Apache-2.0",
