@@ -10,7 +10,6 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Job;
 
-use CampaignChain\CoreBundle\Entity\ReportAnalyticsActivityFact;
 use CampaignChain\CoreBundle\Entity\SchedulerReportOperation;
 use CampaignChain\CoreBundle\Job\JobReportInterface;
 use Doctrine\ORM\EntityManager;
