@@ -1,6 +1,6 @@
 {
     "name": "campaignchain/operation-facebook",
-    "description": "Collection of various Facebook operations.",
+    "description": "Collection of various Facebook operations (e.g. posting a status update).",
     "keywords": ["facebook","campaignchain"],
     "type": "campaignchain-operation",
     "homepage": "http://www.campaignchain.com",
