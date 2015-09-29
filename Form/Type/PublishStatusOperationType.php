@@ -13,6 +13,7 @@ namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PublishStatusOperationType extends OperationType
 {
@@ -40,6 +41,18 @@ class PublishStatusOperationType extends OperationType
                     'multiple'  => false,
                 ));
         }
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $defaults = array(
+            'data_class' => get_class($this->operationDetail),
+        );
+
+        if($this->operationDetail){
+            $defaults['data'] = $this->operationDetail;
+        }
+        $resolver->setDefaults($defaults);
     }
 
     public function getName()
