@@ -10,41 +10,12 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 
+use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 
-class PublishStatusOperationType extends AbstractType
+class PublishStatusOperationType extends OperationType
 {
-    private $status = null;
-    private $view = 'default';
-    protected $em;
-    protected $container;
-    private $location;
-
-    public function __construct(EntityManager $em, ContainerInterface $container)
-    {
-        $this->em = $em;
-        $this->container = $container;
-    }
-
-    public function setStatus($status){
-        $this->status = $status;
-    }
-
-    public function setView($view){
-        $this->view = $view;
-    }
-
-    public function setLocation($location){
-        $this->location = $location;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -56,7 +27,7 @@ class PublishStatusOperationType extends AbstractType
                 ),
             ));
 
-        if($this->status instanceof UserStatus){
+        if($this->operationDetail instanceof UserStatus){
             $builder
                 ->add('privacy', 'choice', array(
                     'label' => 'Audience',
@@ -69,30 +40,6 @@ class PublishStatusOperationType extends AbstractType
                     'multiple'  => false,
                 ));
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        if($this->location){
-            $view->vars['location'] = $this->location;
-        } else {
-            $view->vars['location'] = $options['data']->getOperation()->getActivity()->getLocation();
-        }
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $defaults = array(
-            'data_class' => get_class($this->status),
-        );
-
-        if($this->status){
-            $defaults['data'] = $this->status;
-        }
-        $resolver->setDefaults($defaults);
     }
 
     public function getName()
