@@ -28,7 +28,7 @@ class PublishStatusOperationType extends OperationType
                 ),
             ));
 
-        if($this->operationDetail instanceof UserStatus){
+        if($this->content instanceof UserStatus){
             $builder
                 ->add('privacy', 'choice', array(
                     'label' => 'Audience',
@@ -46,11 +46,11 @@ class PublishStatusOperationType extends OperationType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $defaults = array(
-            'data_class' => get_class($this->operationDetail),
+            'data_class' => get_class($this->content),
         );
 
-        if($this->operationDetail){
-            $defaults['data'] = $this->operationDetail;
+        if($this->content){
+            $defaults['data'] = $this->content;
         }
         $resolver->setDefaults($defaults);
     }
