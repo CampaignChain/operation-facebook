@@ -6,6 +6,10 @@
 # file that was distributed with this source code.
 
 parameters:
+    campaignchain.operation.facebook.publish_status:
+        bundle_name: "campaignchain/operation-facebook"
+        module_identifier: "campaignchain-facebook-publish-status"
+        form_type: "CampaignChain\\Operation\\FacebookBundle\\Form\\Type\\PublishStatusOperationType"
 
 services:
     campaignchain.job.operation.facebook.publish_status:
