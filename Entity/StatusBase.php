@@ -36,7 +36,8 @@ abstract class StatusBase extends Meta
     protected $operation;
 
     /**
-     * @ORM\ManyToOne(targetEntity="CampaignChain\Location\FacebookBundle\Entity\LocationBase")
+     * @ORM\ManyToOne(targetEntity="CampaignChain\Location\FacebookBundle\Entity\LocationBase", inversedBy="statuses")
+     * @ORM\JoinColumn(referencedColumnName="id")
      */
     protected $facebookLocation;
 
