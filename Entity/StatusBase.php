@@ -13,6 +13,7 @@ namespace CampaignChain\Operation\FacebookBundle\Entity;
 use CampaignChain\CoreBundle\Entity\Meta;
 use CampaignChain\Location\FacebookBundle\Entity\LocationBase;
 use Doctrine\ORM\Mapping as ORM;
+use CampaignChain\CoreBundle\Util\ParserUtil;
 
 /**
  * @ORM\Entity
@@ -120,7 +121,7 @@ abstract class StatusBase extends Meta
      */
     public function setUrl($url)
     {
-        $this->url = $url;
+        $this->url = ParserUtil::sanitizeUrl($url);
 
         return $this;
     }
