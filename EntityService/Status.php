@@ -45,6 +45,7 @@ class Status implements OperationServiceInterface
         $this->em->persist($clonedStatus);
         $this->em->flush();
     }
+    
     public function removeOperation($id){
         try {
             $operation = $this->getStatusByOperation($id);
