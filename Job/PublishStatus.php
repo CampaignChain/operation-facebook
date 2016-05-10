@@ -10,30 +10,73 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Job;
 
+use CampaignChain\Channel\FacebookBundle\REST\FacebookClient;
 use CampaignChain\CoreBundle\Entity\Action;
-use CampaignChain\CoreBundle\Entity\CTA;
 use CampaignChain\CoreBundle\Entity\Medium;
+use CampaignChain\CoreBundle\EntityService\CTAService;
+use CampaignChain\CoreBundle\Exception\ExternalApiException;
+use CampaignChain\Operation\FacebookBundle\Entity\StatusBase;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
-use CampaignChain\CoreBundle\Util\ParserUtil;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 
+/**
+ * Class PublishStatus
+ * @package CampaignChain\Operation\FacebookBundle\Job
+ */
 class PublishStatus implements JobActionInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
-    protected $container;
 
+    /**
+     * @var CTAService
+     */
+    protected $ctaService;
+
+    /**
+     * @var FacebookClient
+     */
+    protected $client;
+
+    /**
+     * @var ReportPublishStatus
+     */
+    protected $reportPublishStatus;
+
+    /**
+     * @var CacheManager
+     */
+    protected $cacheManager;
+
+    /**
+     * @var string
+     */
     protected $message;
 
-    public function __construct(EntityManager $em, $container)
+    public function __construct(EntityManager $em, CTAService $ctaService, FacebookClient $client, ReportPublishStatus $reportPublishStatus, CacheManager $cacheManager)
     {
         $this->em = $em;
-        $this->container = $container;
+        $this->ctaService = $ctaService;
+        $this->client = $client;
+        $this->reportPublishStatus = $reportPublishStatus;
+        $this->cacheManager = $cacheManager;
     }
 
+    /**
+     * @param  string $operationId
+     * @return string
+     * @throws \Exception
+     */
     public function execute($operationId)
     {
-        $status = $this->em->getRepository('CampaignChainOperationFacebookBundle:StatusBase')->findOneByOperation($operationId);
+        /** @var StatusBase $status */
+        $status = $this->em
+            ->getRepository('CampaignChainOperationFacebookBundle:StatusBase')
+            ->findOneByOperation($operationId);
 
         if (!$status) {
             throw new \Exception('No Facebook status found for an operation with ID: '.$operationId);
@@ -41,74 +84,71 @@ class PublishStatus implements JobActionInterface
 
         // Process URLs in message and save the new message text, now including
         // the replaced URLs with the Tracking ID attached for call to action tracking.
-        $ctaService = $this->container->get('campaignchain.core.cta');
         $status->setMessage(
-            $ctaService->processCTAs($status->getMessage(), $status->getOperation(), 'txt')->getContent()
+            $this->ctaService->processCTAs($status->getMessage(), $status->getOperation(), 'txt')->getContent()
         );
 
-        $channel = $this->container->get('campaignchain.channel.facebook.rest.client');
-        $connection = $channel->connectByActivity($status->getOperation()->getActivity());
+        /** @var \Facebook $connection */
+        $connection = $this->client->connectByActivity($status->getOperation()->getActivity());
 
-        if ($connection) {
-            $params = array();
+        if (!$connection) {
+            return;
+        }
+        $params = array();
 
-            if($status instanceof UserStatus){
-                $privacy = array(
-                    'value' => $status->getPrivacy()
-                );
-                $params['privacy'] = json_encode($privacy);
-            }
-            $params['message'] = $status->getMessage();
-            $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $params);
+        if($status instanceof UserStatus){
+            $privacy = array(
+                'value' => $status->getPrivacy()
+            );
+            $params['privacy'] = json_encode($privacy);
+        }
+        $params['message'] = $status->getMessage();
 
-            $connection->destroySession();
+        //have images?
+        $images = $this->em
+            ->getRepository('CampaignChainHookImageBundle:Image')
+            ->getImagesForOperation($status->getOperation());
 
-            // Set URL to published status message on Facebook
-            $statusURL = 'https://www.facebook.com/'.str_replace('_', '/posts/', $response['id']);
-
-            $status->setUrl($statusURL);
-            $status->setPostId($response['id']);
-            // Set Operation to closed.
-            $status->getOperation()->setStatus(Action::STATUS_CLOSED);
-
-            $location = $status->getOperation()->getLocations()[0];
-            $location->setIdentifier($response['id']);
-            $location->setUrl($statusURL);
-            $location->setName($status->getOperation()->getName());
-            $location->setStatus(Medium::STATUS_ACTIVE);
-
-            // Schedule data collection for report
-            $report = $this->container->get('campaignchain.job.report.facebook.publish_status');
-            $report->schedule($status->getOperation());
-
-            $this->em->flush();
-
-            $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook';
-            if($status instanceof UserStatus){
-                $this->message .= ' with privacy setting "'.$privacy['value'].'"';
-            }
-            $this->message .= '. See it on Facebook: <a href="'.$statusURL.'">'.$statusURL.'</a>';
-
-            return self::STATUS_OK;
+        if ($images) {
+            //Facebook handles only 1 image
+            $params['link'] = $this->cacheManager
+                ->getBrowserPath($images[0]->getPath(), "auto_rotate");
         }
 
-        //die('End');
-//        $client = new Client();
-//        $oauth = new OauthPlugin(array(
-//            'consumer_key'    => 'xxx',
-//            'consumer_secret' => 'xxx'
-//        ));
-//        $client->addSubscriber($oauth);
-//
-//        try {
-//            $request = $this->baseURL.'/me/feed?privacy=SELF&access_token='.$this->accessToken;
-//            $response = $client->get($request)->send();
-//            print_r($response->json());die();
-//        //$response = $client->get('me')->send()->getBody();
-//        } catch (ClientErrorResponseException $exception) {
-//            $responseBody = $exception->getResponse()->getBody(true);
-//            print_r($responseBody);die();
-//        }
+        try {
+            $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $params);
+        } catch (\Exception $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        $connection->destroySession();
+
+        // Set URL to published status message on Facebook
+        $statusURL = 'https://www.facebook.com/'.str_replace('_', '/posts/', $response['id']);
+
+        $status->setUrl($statusURL);
+        $status->setPostId($response['id']);
+        // Set Operation to closed.
+        $status->getOperation()->setStatus(Action::STATUS_CLOSED);
+
+        $location = $status->getOperation()->getLocations()[0];
+        $location->setIdentifier($response['id']);
+        $location->setUrl($statusURL);
+        $location->setName($status->getOperation()->getName());
+        $location->setStatus(Medium::STATUS_ACTIVE);
+
+        // Schedule data collection for report
+        $this->reportPublishStatus->schedule($status->getOperation());
+
+        $this->em->flush();
+
+        $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook';
+        if($status instanceof UserStatus){
+            $this->message .= ' with privacy setting "'.$privacy['value'].'"';
+        }
+        $this->message .= '. See it on Facebook: <a href="'.$statusURL.'">'.$statusURL.'</a>';
+
+        return self::STATUS_OK;
     }
 
     public function getMessage()

@@ -14,7 +14,7 @@ parameters:
 services:
     campaignchain.job.operation.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Job\PublishStatus
-        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+        arguments: [ "@doctrine.orm.entity_manager", "@campaignchain.core.cta", "@campaignchain.channel.facebook.rest.client", "@campaignchain.job.report.facebook.publish_status", "@liip_imagine.cache.manager"]
     campaignchain.job.report.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Job\ReportPublishStatus
         arguments: [ @doctrine.orm.entity_manager, @service_container ]
