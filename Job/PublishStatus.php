@@ -113,7 +113,7 @@ class PublishStatus implements JobActionInterface
         if ($images) {
             $paramsImg = array();
             // Suppress caption.
-            $paramsImg['caption'] = '';
+            $paramsImg['caption'] = $status->getMessage();
             // Avoid that feed shows "... added a new photo" entry automtically.
             //$paramsImg['no_story'] = 1;
 
@@ -127,22 +127,22 @@ class PublishStatus implements JobActionInterface
             } catch (\Exception $e) {
                 throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
             }
-        }
+        } else {
+            $params = array();
 
-        $params = array();
+            if ($status instanceof UserStatus) {
+                $privacy = array(
+                    'value' => $status->getPrivacy()
+                );
+                $params['privacy'] = json_encode($privacy);
+            }
+            $params['message'] = $status->getMessage();
 
-        if($status instanceof UserStatus){
-            $privacy = array(
-                'value' => $status->getPrivacy()
-            );
-            $params['privacy'] = json_encode($privacy);
-        }
-        $params['message'] = $status->getMessage();
-
-        try {
-            $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $params);
-        } catch (\Exception $e) {
-            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+            try {
+                $response = $connection->api('/' . $status->getFacebookLocation()->getIdentifier() . '/feed', 'POST', $params);
+            } catch (\Exception $e) {
+                throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+            }
         }
 
         $connection->destroySession();
