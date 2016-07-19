@@ -103,14 +103,6 @@ class PublishStatus implements JobActionInterface
         }
         $params = array();
 
-        if($status instanceof UserStatus){
-            $privacy = array(
-                'value' => $status->getPrivacy()
-            );
-            $params['privacy'] = json_encode($privacy);
-        }
-        $params['message'] = $status->getMessage();
-
         //have images?
         $images = $this->em
             ->getRepository('CampaignChainHookImageBundle:Image')
@@ -118,9 +110,24 @@ class PublishStatus implements JobActionInterface
 
         if ($images) {
             //Facebook handles only 1 image
-            $params['link'] = $this->cacheManager
+            $params['url'] = $this->cacheManager
                 ->getBrowserPath($images[0]->getPath(), "auto_rotate");
+
+            try {
+                $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $params);
+                $params['object_attachment'] = $response['id'];
+            } catch (\Exception $e) {
+                throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+            }
         }
+
+        if($status instanceof UserStatus){
+            $privacy = array(
+                'value' => $status->getPrivacy()
+            );
+            $params['privacy'] = json_encode($privacy);
+        }
+        $params['message'] = $status->getMessage();
 
         try {
             $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $params);
