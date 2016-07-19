@@ -101,25 +101,32 @@ class PublishStatus implements JobActionInterface
         if (!$connection) {
             return;
         }
-        $params = array();
 
-        //have images?
+        /*
+         * If an image was attached, we'll first upload the photo to Facebook
+         * and then use the Facebook object ID of the picture in the message.
+         */
         $images = $this->em
             ->getRepository('CampaignChainHookImageBundle:Image')
             ->getImagesForOperation($status->getOperation());
 
         if ($images) {
+            $paramsImg = array();
+            $paramsImg['caption'] = null;
+
             //Facebook handles only 1 image
-            $params['url'] = $this->cacheManager
+            $paramsImg['url'] = $this->cacheManager
                 ->getBrowserPath($images[0]->getPath(), "auto_rotate");
 
             try {
-                $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $params);
-                $params['object_attachment'] = $response['id'];
+                $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $paramsImg);
+                $paramsImg['object_attachment'] = $response['id'];
             } catch (\Exception $e) {
                 throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
             }
         }
+
+        $params = array();
 
         if($status instanceof UserStatus){
             $privacy = array(
