@@ -113,9 +113,9 @@ class PublishStatus implements JobActionInterface
         if ($images) {
             $paramsImg = array();
             // Suppress caption.
-            $paramsImg['caption'] = null;
+            $paramsImg['caption'] = '';
             // Avoid that feed shows "... added a new photo" entry automtically.
-            $paramsImg['no_story'] = true;
+            $paramsImg['no_story'] = 1;
 
             //Facebook handles only 1 image
             $paramsImg['url'] = $this->cacheManager
