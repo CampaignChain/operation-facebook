@@ -102,6 +102,8 @@ class PublishStatus implements JobActionInterface
             return;
         }
 
+        $paramsMsg = array();
+
         /*
          * If an image was attached, we'll first upload the photo to Facebook
          * and then use the Facebook object ID of the picture in the message.
@@ -115,7 +117,7 @@ class PublishStatus implements JobActionInterface
 
             $paramsImg['caption'] = $status->getMessage();
             // Avoid that feed shows "... added a new photo" entry automtically.
-            //$paramsImg['no_story'] = 1;
+            $paramsImg['no_story'] = 1;
 
             //Facebook handles only 1 image
             $paramsImg['url'] = $this->cacheManager
@@ -129,8 +131,6 @@ class PublishStatus implements JobActionInterface
                 throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
             }
         }
-
-        $paramsMsg = array();
 
         if($status instanceof UserStatus){
             $privacy = array(
