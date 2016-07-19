@@ -112,51 +112,52 @@ class PublishStatus implements JobActionInterface
 
         if ($images) {
             $paramsImg = array();
-            // Suppress caption.
+
             $paramsImg['caption'] = $status->getMessage();
             // Avoid that feed shows "... added a new photo" entry automtically.
-            //$paramsImg['no_story'] = 1;
+            $paramsImg['no_story'] = 1;
 
             //Facebook handles only 1 image
             $paramsImg['url'] = $this->cacheManager
                 ->getBrowserPath($images[0]->getPath(), "auto_rotate");
 
             try {
-                $response = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $paramsImg);
-                $paramsImg['object_attachment'] = $response['id'];
-            } catch (\Exception $e) {
-                throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
-            }
-        } else {
-            $params = array();
+                $responseImg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $paramsImg);
 
-            if ($status instanceof UserStatus) {
-                $privacy = array(
-                    'value' => $status->getPrivacy()
-                );
-                $params['privacy'] = json_encode($privacy);
-            }
-            $params['message'] = $status->getMessage();
-
-            try {
-                $response = $connection->api('/' . $status->getFacebookLocation()->getIdentifier() . '/feed', 'POST', $params);
+                $paramsMsg['object_attachment'] = $responseImg['id'];
             } catch (\Exception $e) {
                 throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
             }
         }
 
+        $paramsMsg = array();
+
+        if($status instanceof UserStatus){
+            $privacy = array(
+                'value' => $status->getPrivacy()
+            );
+            $paramsMsg['privacy'] = json_encode($privacy);
+        }
+        $paramsMsg['message'] = $status->getMessage();
+
+        try {
+            $responseMsg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $paramsMsg);
+        } catch (\Exception $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+        }
+
         $connection->destroySession();
 
         // Set URL to published status message on Facebook
-        $statusURL = 'https://www.facebook.com/'.str_replace('_', '/posts/', $response['id']);
+        $statusURL = 'https://www.facebook.com/'.str_replace('_', '/posts/', $responseMsg['id']);
 
         $status->setUrl($statusURL);
-        $status->setPostId($response['id']);
+        $status->setPostId($responseMsg['id']);
         // Set Operation to closed.
         $status->getOperation()->setStatus(Action::STATUS_CLOSED);
 
         $location = $status->getOperation()->getLocations()[0];
-        $location->setIdentifier($response['id']);
+        $location->setIdentifier($responseMsg['id']);
         $location->setUrl($statusURL);
         $location->setName($status->getOperation()->getName());
         $location->setStatus(Medium::STATUS_ACTIVE);
@@ -166,7 +167,7 @@ class PublishStatus implements JobActionInterface
 
         $this->em->flush();
 
-        $this->message = 'The message "'.$params['message'].'" with the ID "'.$response['id'].'" has been posted on Facebook';
+        $this->message = 'The message "'.$paramsMsg['message'].'" with the ID "'.$responseMsg['id'].'" has been posted on Facebook';
         if($status instanceof UserStatus){
             $this->message .= ' with privacy setting "'.$privacy['value'].'"';
         }
