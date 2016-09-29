@@ -17,6 +17,7 @@ parameters:
         bundle_name: "campaignchain/operation-facebook"
         module_identifier: "campaignchain-facebook-publish-status"
         form_type: "CampaignChain\\Operation\\FacebookBundle\\Form\\Type\\PublishStatusOperationType"
+        validator: "campaignchain.validator.operation.facebook.publish_status"
 
 services:
     campaignchain.job.operation.facebook.publish_status:
@@ -28,3 +29,11 @@ services:
     campaignchain.operation.facebook.status:
         class: CampaignChain\Operation\FacebookBundle\EntityService\Status
         arguments: [ @doctrine.orm.entity_manager ]
+    campaignchain.validator.operation.facebook.publish_status:
+        class: CampaignChain\Operation\FacebookBundle\Validator\PublishStatus
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@campaignchain.channel.facebook.rest.client"
+            - "%campaignchain_channel_facebook.max_duplicate_interval%"
+            - "@campaignchain.core.util.scheduler"
+            - "@router"

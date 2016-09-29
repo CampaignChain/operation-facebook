@@ -19,6 +19,7 @@ modules:
             operation: campaignchain.operation.facebook.status
             job: campaignchain.job.operation.facebook.publish_status
             report: campaignchain.job.report.facebook.publish_status
+            validator: campaignchain.validator.operation.facebook.publish_status
         params:
             owns_location: true
         metrics:
