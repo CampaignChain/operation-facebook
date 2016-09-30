@@ -96,12 +96,21 @@ class PublishStatus extends AbstractOperationValidator
      */
     public function isExecutableByLocation($content, \DateTime $startDate)
     {
+        $endDateInterval = clone $startDate;
+        $endDateInterval->modify('+'.$this->maxDuplicateInterval);
+
         /*
          * If message contains no links, find out whether it has been posted before.
          */
         if($this->mustValidate($content, $startDate)){
-            // Is the Activity supposed to be executed now?
-            if($this->schedulerUtil->isDueNow($startDate)) {
+            /*
+             * Is the Activity supposed to be executed now or is it scheduled
+             * within the time where a duplicate status error could emerge?
+             */
+            if(
+                $this->schedulerUtil->isDueNow($startDate) ||
+                ($startDate > new \DateTime() && $startDate < $endDateInterval)
+            ) {
                 // Connect to Facebook REST API
                 $connection = $this->restClient->connectByActivity(
                     $content->getOperation()->getActivity()
