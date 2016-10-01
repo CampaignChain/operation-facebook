@@ -27,7 +27,7 @@ use CampaignChain\Operation\FacebookBundle\Entity\StatusBase;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
-class PublishStatus extends AbstractOperationValidator
+class PublishStatusValidator extends AbstractOperationValidator
 {
     protected $em;
     protected $restClient;

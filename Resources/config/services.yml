@@ -36,7 +36,7 @@ services:
         class: CampaignChain\Operation\FacebookBundle\EntityService\Status
         arguments: [ @doctrine.orm.entity_manager ]
     campaignchain.validator.operation.facebook.publish_status:
-        class: CampaignChain\Operation\FacebookBundle\Validator\PublishStatus
+        class: CampaignChain\Operation\FacebookBundle\Validator\PublishStatusValidator
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@campaignchain.channel.facebook.rest.client"
