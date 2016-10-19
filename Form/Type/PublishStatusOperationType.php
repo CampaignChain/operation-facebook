@@ -19,6 +19,7 @@ namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
+use CampaignChain\TextareaCountFormTypeBundle\Form\Type\TextareaCountType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -27,7 +28,7 @@ class PublishStatusOperationType extends OperationType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('message', 'textarea', array(
+            ->add('message', TextareaCountType::class, array(
                 'label' => false,
                 'attr' => array(
                     'placeholder' => 'Compose message...',
