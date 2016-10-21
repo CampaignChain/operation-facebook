@@ -17,9 +17,9 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 
+use CampaignChain\AutocompleteFormTypeBundle\Form\Type\AutocompleteType;
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
-use CampaignChain\TextareaCountFormTypeBundle\Form\Type\TextareaCountType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -28,12 +28,19 @@ class PublishStatusOperationType extends OperationType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('message', TextareaCountType::class, array(
+            ->add('message', AutocompleteType::class, array(
                 'label' => false,
                 'attr' => array(
                     'placeholder' => 'Compose message...',
                     'maxlength' => 2000,
                 ),
+                'campaignchain_autocomplete' => array(
+                    '@' => array(
+                        'endpoint' => '/api/v1/p/campaignchain/channel-facebook/users/search',
+                        'location' => $this->location->getId(),
+                        'allow_space' => true,
+                    )
+                )
             ));
 
         if($this->content instanceof UserStatus){

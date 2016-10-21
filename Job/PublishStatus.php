@@ -139,14 +139,6 @@ class PublishStatus implements JobActionInterface
         /** @var \Facebook $connection */
         $connection = $this->client->connectByActivity($status->getOperation()->getActivity());
 
-        if (!$connection) {
-            throw new JobException(
-                'Cannot connect to Facebook REST API for Location "'
-                .$status->getOperation()->getActivity()->getLocation()->getUrl()
-                .'"',
-                ErrorCode::CONNECTION_TO_REST_API_FAILED);
-        }
-
         $paramsMsg = array();
 
         /*
