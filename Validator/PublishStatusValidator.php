@@ -24,7 +24,7 @@ use CampaignChain\CoreBundle\Exception\ExternalApiException;
 use CampaignChain\CoreBundle\Util\SchedulerUtil;
 use CampaignChain\CoreBundle\Validator\AbstractOperationValidator;
 use CampaignChain\Operation\FacebookBundle\Entity\StatusBase;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
 class PublishStatusValidator extends AbstractOperationValidator
@@ -36,14 +36,14 @@ class PublishStatusValidator extends AbstractOperationValidator
     protected $router;
 
     public function __construct(
-        EntityManager $em,
+        ManagerRegistry $managerRegistry,
         FacebookClient $restClient,
         $maxDuplicateInterval,
         SchedulerUtil $schedulerUtil,
         Router $router
     )
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
         $this->restClient = $restClient;
         $this->maxDuplicateInterval = $maxDuplicateInterval;
         $this->schedulerUtil = $schedulerUtil;

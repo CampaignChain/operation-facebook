@@ -19,7 +19,7 @@ namespace CampaignChain\Operation\FacebookBundle\Job;
 
 use CampaignChain\CoreBundle\Entity\SchedulerReportOperation;
 use CampaignChain\CoreBundle\Job\JobReportInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class ReportPublishStatus implements JobReportInterface
 {
@@ -35,9 +35,9 @@ class ReportPublishStatus implements JobReportInterface
 
     protected $status;
 
-    public function __construct(EntityManager $em, $container)
+    public function __construct(ManagerRegistry $managerRegistry, $container)
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
         $this->container = $container;
     }
 

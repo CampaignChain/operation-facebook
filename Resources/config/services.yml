@@ -23,7 +23,7 @@ services:
     campaignchain.job.operation.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Job\PublishStatus
         arguments:
-            - "@doctrine.orm.entity_manager"
+            - "@doctrine"
             - "@campaignchain.core.cta"
             - "@campaignchain.channel.facebook.rest.client"
             - "@campaignchain.job.report.facebook.publish_status"
@@ -31,14 +31,14 @@ services:
             - "@campaignchain.validator.operation.facebook.publish_status"
     campaignchain.job.report.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Job\ReportPublishStatus
-        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+        arguments: [ @doctrine, @service_container ]
     campaignchain.operation.facebook.status:
         class: CampaignChain\Operation\FacebookBundle\EntityService\Status
-        arguments: [ @doctrine.orm.entity_manager ]
+        arguments: [ @doctrine ]
     campaignchain.validator.operation.facebook.publish_status:
         class: CampaignChain\Operation\FacebookBundle\Validator\PublishStatusValidator
         arguments:
-            - "@doctrine.orm.entity_manager"
+            - "@doctrine"
             - "@campaignchain.channel.facebook.rest.client"
             - "%campaignchain_channel_facebook.max_duplicate_interval%"
             - "@campaignchain.core.util.scheduler"

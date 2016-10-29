@@ -26,7 +26,7 @@ use CampaignChain\CoreBundle\Exception\ExternalApiException;
 use CampaignChain\CoreBundle\Exception\JobException;
 use CampaignChain\Operation\FacebookBundle\Entity\StatusBase;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use CampaignChain\Operation\FacebookBundle\Validator\PublishStatusValidator as Validator;
@@ -38,7 +38,7 @@ use CampaignChain\Operation\FacebookBundle\Validator\PublishStatusValidator as V
 class PublishStatus implements JobActionInterface
 {
     /**
-     * @var EntityManager
+     * @var Registry
      */
     protected $em;
 
@@ -73,7 +73,7 @@ class PublishStatus implements JobActionInterface
     protected $validator;
 
     public function __construct(
-        EntityManager $em,
+        ManagerRegistry $managerRegistry,
         CTAService $cta,
         FacebookClient $client,
         ReportPublishStatus $report,
@@ -81,7 +81,7 @@ class PublishStatus implements JobActionInterface
         Validator $validator
     )
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
         $this->cta = $cta;
         $this->client = $client;
         $this->report = $report;
