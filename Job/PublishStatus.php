@@ -173,7 +173,8 @@ class PublishStatus implements JobActionInterface
 
                 $paramsMsg['object_attachment'] = $responseImg['id'];
             } catch (\Exception $e) {
-                throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+                throw new ExternalApiException(
+                    $e->getMessage().'. Parameters of REST API call: '.json_encode($paramsImg), $e->getCode(), $e);
             }
         }
 
@@ -188,7 +189,10 @@ class PublishStatus implements JobActionInterface
         try {
             $responseMsg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $paramsMsg);
         } catch (\Exception $e) {
-            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+            throw new ExternalApiException(
+                $e->getMessage().'. Parameters of REST API call: '.json_encode($paramsMsg),
+                $e->getCode(), $e
+            );
         }
 
         $connection->destroySession();
