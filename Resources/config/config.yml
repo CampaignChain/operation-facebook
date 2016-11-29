@@ -9,3 +9,11 @@ twig:
     form:
         resources:
             - 'CampaignChainOperationFacebookBundle:Form:fields.html.twig'
+
+liip_imagine:
+    filter_sets:
+        campaignchain_facebook_photo:
+            filters:
+                auto_rotate: ~
+                downscale:
+                    max: [1200, 900]

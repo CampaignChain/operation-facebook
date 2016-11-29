@@ -166,7 +166,7 @@ class PublishStatus implements JobActionInterface
 
             //Facebook handles only 1 image
             $paramsImg['url'] = $this->cacheManager
-                ->getBrowserPath($images[0]->getPath(), "facebook_photo");
+                ->getBrowserPath($images[0]->getPath(), "campaignchain_facebook_photo");
 
             try {
                 $responseImg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $paramsImg);
