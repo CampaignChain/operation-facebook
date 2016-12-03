@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
-{% extends 'CampaignChainCoreBundle:Operation:read.html.twig' %}
-
-{% block operation %}
-    {% include 'CampaignChainOperationFacebookBundle::_read.html.twig' %}
-{% endblock %}
-
-{% block sidebar_operation %}
-    {% include 'CampaignChainOperationFacebookBundle::_read_sidebar.html.twig' %}
-{% endblock %}
+{% if status_type == 'user' %}
+    {% if status.getPrivacy() == 'EVERYONE' %}
+        <p><i class="fa fa-globe"></i> Public</p>
+    {% elseif status.getPrivacy() == 'ALL_FRIENDS' %}
+        <p><i class="fa fa-users"></i> Friends</p>
+    {% elseif status.getPrivacy() == 'FRIENDS_OF_FRIENDS' %}
+        <p><i class="fa fa-users"></i> Friends of Friends</p>
+    {% elseif status.getPrivacy() == 'SELF' %}
+        <p><i class="fa fa-lock"></i> Only Me</p>
+    {% endif %}
+{% else %}
+    <p><i class="fa fa-globe"></i> Public</p>
+{% endif %}
