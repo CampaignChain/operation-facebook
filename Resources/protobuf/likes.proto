@@ -8,19 +8,21 @@
 
 // [START declaration]
 syntax = "proto3";
+package likes;
 // [END declaration]
 
 // [START messages]
 message Likes {
     repeated Data data = 1;
-
-    message summary {
-        int32 total_count = 1;
-    }
+    Summary summary = 2;
 }
 
 message Data {
-    int32 id = 1;
+    int64 id = 1;
     string name = 2;
+}
+
+message Summary {
+    int32 total_count = 1;
 }
 // [END messages]
