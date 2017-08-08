@@ -17,6 +17,7 @@
 
 namespace CampaignChain\Operation\FacebookBundle\Job;
 
+use CampaignChain\Channel\FacebookBundle\REST\FacebookClient;
 use CampaignChain\CoreBundle\Entity\SchedulerReportOperation;
 use CampaignChain\CoreBundle\Job\JobReportInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -71,21 +72,15 @@ class ReportPublishStatus implements JobReportInterface
         }
 
         $channel = $this->container->get('campaignchain.channel.facebook.rest.client');
+        /** @var FacebookClient $connection */
         $connection = $channel->connectByActivity($this->status->getOperation()->getActivity());
 
         if ($connection) {
-            $params["summary"] = "1";
-            $response = $connection->api('/'.$this->status->getPostId().'/likes', 'GET', $params);
-            $likes = $response['summary']['total_count'];
+            $likes = $connection->getPostLikesCount($this->status->getPostId());
 
-            $params["summary"] = "1";
-            $params["filter"] = "stream";
-            $response = $connection->api('/'.$this->status->getPostId().'/comments', 'GET', $params);
-            $comments = $response['summary']['total_count'];
+            $comments = $connection->getPostCommentsCount($this->status->getPostId());
 
-//            $response = $connection->api('/'.$this->status->getPostId().'/sharedposts?fields=from,via', 'GET', $params);
-
-            $connection->destroySession();
+//          $response = $connection->api('/'.$this->status->getPostId().'/sharedposts?fields=from,via', 'GET', $params);
         }
 
         // Add report data.

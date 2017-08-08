@@ -136,7 +136,7 @@ class PublishStatus implements JobActionInterface
             $this->cta->processCTAs($status->getMessage(), $status->getOperation(), $options)->getContent()
         );
 
-        /** @var \Facebook $connection */
+        /** @var FacebookClient $connection */
         $connection = $this->client->connectByActivity($status->getOperation()->getActivity());
 
         if (!$connection) {
@@ -158,44 +158,39 @@ class PublishStatus implements JobActionInterface
             ->getImagesForOperation($status->getOperation());
 
         if ($images) {
-            $paramsImg = array();
-
-            $paramsImg['caption'] = $status->getMessage();
-            // Avoid that feed shows "... added a new photo" entry automtically.
-            $paramsImg['no_story'] = 1;
-
-            //Facebook handles only 1 image
-            $paramsImg['url'] = $this->cacheManager
-                ->getBrowserPath($images[0]->getPath(), "campaignchain_facebook_photo");
-
             try {
-                $responseImg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/photos', 'POST', $paramsImg);
+                $responseImg = $connection->postPhoto(
+                    $status->getFacebookLocation()->getIdentifier(),
+                    $status->getMessage(),
+                    $this->cacheManager->getBrowserPath($images[0]->getPath(), "campaignchain_facebook_photo")
+                );
 
                 $paramsMsg['object_attachment'] = $responseImg['id'];
             } catch (\Exception $e) {
                 throw new ExternalApiException(
-                    $e->getMessage().'. Parameters of REST API call: '.json_encode($paramsImg), $e->getCode(), $e);
+                    $e->getMessage(), $e->getCode(), $e);
             }
         }
 
-        if($status instanceof UserStatus){
-            $privacy = array(
-                'value' => $status->getPrivacy()
-            );
-            $paramsMsg['privacy'] = json_encode($privacy);
-        }
-        $paramsMsg['message'] = $status->getMessage();
-
         try {
-            $responseMsg = $connection->api('/'.$status->getFacebookLocation()->getIdentifier().'/feed', 'POST', $paramsMsg);
+            if($status instanceof UserStatus){
+                $responseMsg = $connection->postUserMessage(
+                    $status->getFacebookLocation()->getIdentifier(),
+                    $status->getMessage(),
+                    $status->getPrivacy()
+                );
+            } else {
+                $responseMsg = $connection->postPageMessage(
+                    $status->getFacebookLocation()->getIdentifier(),
+                    $status->getMessage()
+                );
+            }
         } catch (\Exception $e) {
             throw new ExternalApiException(
-                $e->getMessage().'. Parameters of REST API call: '.json_encode($paramsMsg),
+                $e->getMessage(),
                 $e->getCode(), $e
             );
         }
-
-        $connection->destroySession();
 
         // Set URL to published status message on Facebook
         $statusURL = 'https://www.facebook.com/'.str_replace('_', '/posts/', $responseMsg['id']);
@@ -216,9 +211,9 @@ class PublishStatus implements JobActionInterface
 
         $this->em->flush();
 
-        $this->message = 'The message "'.$paramsMsg['message'].'" with the ID "'.$responseMsg['id'].'" has been posted on Facebook';
+        $this->message = 'The message "'.$status->getMessage().'" with the ID "'.$responseMsg['id'].'" has been posted on Facebook';
         if($status instanceof UserStatus){
-            $this->message .= ' with privacy setting "'.$privacy['value'].'"';
+            $this->message .= ' with privacy setting "'.$status->getPrivacy().'"';
         }
         $this->message .= '. See it on Facebook: <a href="'.$statusURL.'">'.$statusURL.'</a>';
 

@@ -112,15 +112,13 @@ class PublishStatusValidator extends AbstractOperationValidator
                 ($startDate > new \DateTime() && $startDate < $endDateInterval)
             ) {
                 // Connect to Facebook REST API
+                /** @var FacebookClient $connection */
                 $connection = $this->restClient->connectByActivity(
                     $content->getOperation()->getActivity()
                 );
 
-                $params['limit'] = '1';
-
                 try {
-                    $response = $connection->api('/' . $content->getFacebookLocation()->getIdentifier() . '/feed', 'GET', $params);
-                    $connection->destroySession();
+                    $response = $connection->getLatestPost($content->getFacebookLocation()->getIdentifier());
                 } catch (\Exception $e) {
                     throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
                 }
