@@ -20,12 +20,14 @@ namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PublishStatusOperationType extends OperationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->setOptions($options);
+
         $builder
             ->add('message', 'textarea', array(
                 'label' => false,
@@ -50,8 +52,10 @@ class PublishStatusOperationType extends OperationType
         }
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $defaults = array(
             'data_class' => get_class($this->content),
         );

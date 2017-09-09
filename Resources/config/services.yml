@@ -43,3 +43,10 @@ services:
             - "%campaignchain_channel_facebook.max_duplicate_interval%"
             - "@campaignchain.core.util.scheduler"
             - "@router"
+    campaignchain.operation.facebook.form.type.publish_status:
+        class: CampaignChain\Operation\FacebookBundle\Form\Type\PublishStatusOperationType
+        arguments:
+            - '@doctrine'
+            - '@service_container'
+        tags:
+            - { name: form.type }
