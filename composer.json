@@ -17,7 +17,7 @@
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
-        "campaignchain/activity-facebook": "1.0.x-dev"
+        "campaignchain/activity-facebook": "dev-master"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\FacebookBundle\\": "" }
