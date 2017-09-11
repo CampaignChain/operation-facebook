@@ -19,6 +19,7 @@ namespace CampaignChain\Operation\FacebookBundle\Form\Type;
 
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use CampaignChain\Operation\FacebookBundle\Entity\UserStatus;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -37,15 +38,15 @@ class PublishStatusOperationType extends OperationType
                 ),
             ));
 
-        if($this->content instanceof UserStatus){
+        if($options['data'] instanceof UserStatus){
             $builder
-                ->add('privacy', 'choice', array(
+                ->add('privacy', ChoiceType::class, array(
                     'label' => 'Audience',
                     'choices'   => array(
-                        'EVERYONE' => 'Public',
-                        'ALL_FRIENDS' => 'Friends',
-                        'FRIENDS_OF_FRIENDS' => 'Friends of Friends',
-                        'SELF' => 'Only Me'
+                        'Public' => 'EVERYONE',
+                        'Friends' => 'ALL_FRIENDS',
+                        'Friends of Friends' => 'FRIENDS_OF_FRIENDS',
+                        'Only Me' => 'SELF',
                     ),
                     'multiple'  => false,
                 ));
@@ -57,12 +58,9 @@ class PublishStatusOperationType extends OperationType
         parent::configureOptions($resolver);
 
         $defaults = array(
-            'data_class' => get_class($this->content),
+            'data_class' => 'CampaignChain\Operation\FacebookBundle\Entity\StatusBase',
         );
 
-        if($this->content){
-            $defaults['data'] = $this->content;
-        }
         $resolver->setDefaults($defaults);
     }
 
